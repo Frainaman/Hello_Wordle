@@ -1,5 +1,6 @@
 import heapq
 import random
+from dictionary import dictionary
 
 
 #Priority Queue
@@ -27,6 +28,14 @@ def feedback_function(guess, solution):
         else:
             feedback.append("grey")
     return feedback
+
+def feedback_to_emoji(feedback):
+    emoji_map = {
+        "green": "🟩",  # Lettera giusta nella posizione giusta
+        "yellow": "🟨",  # Lettera presente ma nella posizione sbagliata
+        "grey": "⬜"     # Lettera non presente
+    }
+    return "".join(emoji_map[f] for f in feedback)
 
 #Funzione di filtraggio delle parole in base al feedback
 def filter_candidates(candidates, guess, feedback):
@@ -66,7 +75,7 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
 
         if current_word:
             feedback = feedback_function(current_word, solution)
-            print(f"Tentativo {attempts}: {current_word}")
+            print(f"Tentativo {attempts}: {current_word} -> {feedback_to_emoji(feedback)}")
             if all(color == "green" for color in feedback):
                 return current_word, attempts
         else:
@@ -82,8 +91,7 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
     return None, attempts
 
 if __name__ == "__main__":
-    dictionary = ["apple", "angle", "ample", "banal", "camel", "colab", "canal"]
-    solution = "colab"
+    solution = random.choice(dictionary)
     guessed_word, attempts = wordle_solver(dictionary, feedback_function, solution)
     if guessed_word:
         print(f"Soluzione trovata: {guessed_word} in {attempts} tentativi!")
