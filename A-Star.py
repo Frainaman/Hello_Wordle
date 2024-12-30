@@ -1,7 +1,16 @@
 import heapq
 import random
-from dictionary import dictionary
 
+
+# Funzione per leggere il dizionario da un file
+def load_dictionary(file_path):
+    dictionary = {}
+    try:
+        with open(file_path, "r") as file:
+            return [line.strip().lower() for line in file if line.strip()]
+    except FileNotFoundError:
+        print(f"Errore: il file '{file_path}' non è stato trovato.")
+        exit()
 
 #Priority Queue
 class PriorityQueue:
@@ -91,6 +100,8 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
     return None, attempts
 
 if __name__ == "__main__":
+    dictionary_path = "dictionary"
+    dictionary = load_dictionary(dictionary_path)
     solution = random.choice(dictionary)
     guessed_word, attempts = wordle_solver(dictionary, feedback_function, solution)
     if guessed_word:
