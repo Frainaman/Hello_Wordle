@@ -1,4 +1,6 @@
 import heapq
+import random
+
 
 #Priority Queue
 class PriorityQueue:
@@ -51,3 +53,39 @@ def filter_candidates(candidates, guess, feedback):
 #Euristica per calcolare il punteggio di una parola
 def heuristic(word, feedback, candidates):
     return len(candidates)
+
+def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
+    open_set = PriorityQueue()
+    randGuess = random.choice(dictionary)
+    open_set.put((randGuess,dictionary), 0)
+    attempts = 0
+
+    while not open_set.empty() and attempts < max_attempts:
+        attempts += 1
+        current_word, candidates = open_set.get()
+
+        if current_word:
+            feedback = feedback_function(current_word, solution)
+            print(f"Tentativo {attempts}: {current_word}")
+            if all(color == "green" for color in feedback):
+                return current_word, attempts
+        else:
+            feedback = None
+
+        new_candidates = filter_candidates(candidates, current_word, feedback)
+
+        for word in new_candidates:
+            g = attempts
+            h = heuristic(word, feedback, new_candidates)
+            open_set.put((word, new_candidates), g+h)
+
+    return None, attempts
+
+if __name__ == "__main__":
+    dictionary = ["apple", "angle", "ample", "banal", "camel", "colab", "canal"]
+    solution = "colab"
+    guessed_word, attempts = wordle_solver(dictionary, feedback_function, solution)
+    if guessed_word:
+        print(f"Soluzione trovata: {guessed_word} in {attempts} tentativi!")
+    else:
+        print("Soluzione non trovata.")
