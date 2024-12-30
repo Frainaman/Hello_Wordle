@@ -25,3 +25,29 @@ def feedback_function(guess, solution):
         else:
             feedback.append("grey")
     return feedback
+
+#Funzione di filtraggio delle parole in base al feedback
+def filter_candidates(candidates, guess, feedback):
+    if feedback is None:
+        return candidates
+
+    filtered = []
+    for word in candidates:
+        valid = True
+        for i, (g,f) in enumerate(zip(guess, feedback)):
+            if f == "green" and word[i] != g:
+                valid = False
+                break
+            elif f == "yellow" and (g not in word or word[i] == g):
+                valid = False
+                break
+            elif f == "grey" and g in word:
+                valid = False
+                break
+        if valid:
+            filtered.append(word)
+    return filtered
+
+#Euristica per calcolare il punteggio di una parola
+def heuristic(word, feedback, candidates):
+    return len(candidates)
