@@ -119,7 +119,6 @@ def heuristic(word, candidates):
 def weighted_choice(candidates, scores):
     return max(zip(scores, candidates))[1]
 
-
 def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
     open_set = PriorityQueue()
     initial_guess = random.choice(dictionary)
@@ -149,7 +148,7 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
 def webapp():
     dictionary_path = "../dictionary"
     dictionary = load_dictionary(dictionary_path)
-    solution = random.choice(dictionary)
+    solution = get_word_of_the_day() #Alternativa: random.choice(dictionary)
     attempts_log = []  #Per tenere traccia dei tentativi
 
     def feedback_function_logging(guess, solution):
