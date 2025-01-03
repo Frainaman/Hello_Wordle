@@ -48,7 +48,7 @@ class PriorityQueue:
         return len(self.elements) == 0
 
 
-#Funzione di calcolo del feedback
+# Funzione di calcolo del feedback
 def feedback_function(guess, solution):
     feedback = ["grey"] * len(guess)
     solution_char_counts = {s: solution.count(s) for s in solution}
@@ -72,7 +72,7 @@ def feedback_to_emoji(feedback):
     }
     return "".join(emoji_map[f] for f in feedback)
 
-#Funzione di filtraggio delle parole in base al feedback
+# Funzione di filtraggio delle parole in base al feedback
 def filter_candidates(candidates, guess, feedback):
     filtered = []
     for word in candidates:
@@ -102,7 +102,7 @@ def filter_candidates(candidates, guess, feedback):
 
     return filtered
 
-#Euristica per calcolare il punteggio di una parola
+# Euristica per calcolare il punteggio di una parola
 def heuristic(word, candidates):
     letter_frequencies = {}
     for candidate in candidates:
