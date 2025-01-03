@@ -51,17 +51,16 @@ class PriorityQueue:
 #Funzione di calcolo del feedback
 def feedback_function(guess, solution):
     feedback = ["grey"] * len(guess)
-    solution_counts = {s: solution.count(s) for s in solution}
+    solution_char_counts = {s: solution.count(s) for s in solution}
 
     for i, (g, s) in enumerate(zip(guess, solution)):
         if g == s:
             feedback[i] = "green"
-            solution_counts[g] -= 1
+            solution_char_counts[g] -= 1
 
-    for i, g in enumerate(guess):
-        if feedback[i] == "grey" and solution_counts.get(g, 0) > 0:
+        if g in solution_char_counts and solution_char_counts[g] > 0:
             feedback[i] = "yellow"
-            solution_counts[g] -= 1
+            solution_char_counts[g] -= 1
 
     return feedback
 
@@ -116,7 +115,7 @@ def heuristic(word, candidates):
 
     return score + unique_letters - duplicate_penalty
 
-def weighted_choice(candidates, scores):
+def max_score(candidates, scores):
     return max(zip(scores, candidates))[1]
 
 def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
@@ -139,8 +138,11 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
             break
 
         scores = [heuristic(word, new_candidates) for word in new_candidates]
-        next_guess = weighted_choice(new_candidates, scores)
+        next_guess = max_score(new_candidates, scores)
         open_set.put((next_guess, new_candidates), attempts)
+
+
+
 
     return None, attempts
 
