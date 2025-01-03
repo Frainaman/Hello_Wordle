@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Solver - Algoritmo Minimax</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121213;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2.5em;
+            color: #ffffff;
+        }
+
+        .wordle-container {
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 2px solid #3a3a3c;
+            border-radius: 5px;
+        }
+
+        .tile.green {
+            background-color: #538d4e;
+            color: #ffffff;
+        }
+
+        .tile.yellow {
+            background-color: #b59f3b;
+            color: #ffffff;
+        }
+
+        .tile.grey {
+            background-color: #3a3a3c;
+            color: #ffffff;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wordle Solver - Algoritmo Minimax</h1>
+
+    <div>
+        <p><strong>Parola da indovinare:</strong> {{ word_of_the_day }}</p>
+    </div>
+
+    {% if success %}
+        <p style="color: #538d4e; font-size: 1.2em;">
+            <strong>Successo!</strong> L'algoritmo ha indovinato la parola <strong>{{ word_of_the_day }}</strong>
+            in {{ attempts_log|length }} tentativi!
+        </p>
+    {% else %}
+        <p style="color: #ff4c4c; font-size: 1.2em;">
+            <strong>Fallimento:</strong> L'algoritmo non è riuscito a trovare la parola.
+        </p>
+    {% endif %}
+
+    <div>
+        {% for attempt in attempts_log %}
+            <div class="wordle-container">
+                {% for tile in attempt %}
+                    <div class="tile {{ tile.feedback }}">{{ tile.letter }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
