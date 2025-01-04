@@ -3,6 +3,7 @@ import random
 import requests
 import datetime
 
+
 app = Flask(__name__, template_folder="../templates")
 
 def load_dictionary(file_path):
@@ -48,21 +49,28 @@ def feedback_function(guess, solution):
 
     return feedback
 
+# Funzione euristica
+def heuristic(word, candidates):
+    letter_frequencies = {}
+    for candidate in candidates:
+        for letter in set(candidate):
+            letter_frequencies[letter] = letter_frequencies.get(letter, 0) + 1
+
+    unique_letters = len(set(word))
+    score = sum(letter_frequencies.get(char, 0) for char in set(word))
+    duplicate_penalty = len(word) - unique_letters  # Penalize duplicates
+
+    return score + unique_letters - duplicate_penalty
+
 def minimax_algorithm(candidates, feedback_log=None):
-    # Primo tentativo: scegli una parola casuale
     if feedback_log is None or len(feedback_log) == 0:
         return random.choice(candidates)
 
-    # Semplificazione euristica: viene scelta la parola che è valida per il maggior numero di scenari
     best_guess = None
-    best_score = -1
+    best_score = float('-inf')
 
     for word in candidates:
-        score = 0
-        for feedback in feedback_log:
-            simulated_feedback = feedback_function(word, feedback["guess"])
-            if simulated_feedback == feedback["feedback"]:
-                score += 1
+        score = heuristic(word, candidates)
 
         if score > best_score:
             best_score = score
@@ -87,8 +95,11 @@ def wordle_minimax(dictionary, solution, max_attempts=6):
         if feedback == ["green"] * len(solution):
             success = True
             break
-
-        candidates = [word for word in candidates if feedback_function(guess, word) == feedback]
+        # Filtra i candidati in base al feedback
+        candidates = [
+            word for word in candidates
+            if feedback_function(guess, word) == feedback
+        ]
 
     return attempts_log, success
 
@@ -96,7 +107,7 @@ def wordle_minimax(dictionary, solution, max_attempts=6):
 def webapp():
     dictionary_path = "../dictionary"
     dictionary = load_dictionary(dictionary_path)
-    word_of_the_day =  get_word_of_the_day() #Alternativa: random.choice(dictionary)
+    word_of_the_day = get_word_of_the_day() #Alternativa: random.choice(dictionary)
     attempts_log, success = wordle_minimax(dictionary, word_of_the_day)
 
     formatted_attempts_log = [
