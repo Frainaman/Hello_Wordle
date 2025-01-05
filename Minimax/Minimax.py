@@ -3,7 +3,6 @@ import random
 import requests
 import datetime
 
-
 app = Flask(__name__, template_folder="../templates")
 
 def load_dictionary(file_path):
@@ -41,9 +40,7 @@ def feedback_function(guess, solution):
             solution_char_counts[g] -= 1
 
     for i, g in enumerate(guess):
-        if feedback[i] == "green":
-            continue
-        if g in solution_char_counts and solution_char_counts[g] > 0:
+        if feedback[i] == "grey" and g in solution_char_counts and solution_char_counts[g] > 0:
             feedback[i] = "yellow"
             solution_char_counts[g] -= 1
 
