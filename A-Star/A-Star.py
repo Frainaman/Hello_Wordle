@@ -58,7 +58,8 @@ def feedback_function(guess, solution):
             feedback[i] = "green"
             solution_char_counts[g] -= 1
 
-        if g in solution_char_counts and solution_char_counts[g] > 0:
+    for i, g in enumerate(guess):
+        if feedback[i] == "grey" and g in solution_char_counts and solution_char_counts[g] > 0:
             feedback[i] = "yellow"
             solution_char_counts[g] -= 1
 
@@ -74,33 +75,11 @@ def feedback_to_emoji(feedback):
 
 # Funzione di filtraggio delle parole in base al feedback
 def filter_candidates(candidates, guess, feedback):
-    filtered = []
-    for word in candidates:
-        valid = True
-        word_counts = {char: word.count(char) for char in set(word)}
-        used_counts = {}
 
-        for i, (g, f) in enumerate(zip(guess, feedback)):
-            if f == "green":
-                if word[i] != g:
-                    valid = False
-                    break
-            elif f == "yellow":
-                if g == word[i] or word_counts.get(g, 0) <= used_counts.get(g, 0):
-                    valid = False
-                    break
-            elif f == "grey":
-                if g in word and used_counts.get(g, 0) < word_counts[g]:
-                    valid = False
-                    break
-
-            if f in ["green", "yellow"]:
-                used_counts[g] = used_counts.get(g, 0) + 1
-
-        if valid:
-            filtered.append(word)
-
-    return filtered
+    return [
+        word for word in candidates
+        if feedback_function(guess, word) == feedback
+    ]
 
 # Euristica per calcolare il punteggio di una parola
 def heuristic(word, candidates):
@@ -140,9 +119,6 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
         scores = [heuristic(word, new_candidates) for word in new_candidates]
         next_guess = max_score(new_candidates, scores)
         open_set.put((next_guess, new_candidates), attempts)
-
-
-
 
     return None, attempts
 
