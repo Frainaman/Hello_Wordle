@@ -94,9 +94,6 @@ def heuristic(word, candidates):
 
     return score + unique_letters - duplicate_penalty
 
-def max_score(candidates, scores):
-    return max(zip(scores, candidates))[1]
-
 def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
     open_set = PriorityQueue()
     initial_guess = random.choice(dictionary)
@@ -116,9 +113,9 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
         if not new_candidates:
             break
 
-        scores = [heuristic(word, new_candidates) for word in new_candidates]
-        next_guess = max_score(new_candidates, scores)
-        open_set.put((next_guess, new_candidates), attempts)
+        for next_guess in new_candidates:
+            priority = heuristic(next_guess, new_candidates)
+            open_set.put((next_guess, new_candidates), priority)
 
     return None, attempts
 
@@ -138,7 +135,7 @@ def webapp():
 
     # Passa i dati alla pagina HTML
     return render_template(
-        "A-Star.html",
+        "Greedy.html",
         solution=solution,
         attempts_log=attempts_log,
         success=guessed_word is not None,
