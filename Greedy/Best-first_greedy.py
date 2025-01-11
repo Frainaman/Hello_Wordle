@@ -94,6 +94,9 @@ def heuristic(word, candidates):
 
     return score + unique_letters - duplicate_penalty
 
+def max_score(candidates, scores):
+    return max(zip(scores, candidates))[1]
+
 def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
     open_set = PriorityQueue()
     initial_guess = random.choice(dictionary)
@@ -113,9 +116,9 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
         if not new_candidates:
             break
 
-        for next_guess in new_candidates:
-            priority = heuristic(next_guess, new_candidates)
-            open_set.put((next_guess, new_candidates), priority)
+        scores = [heuristic(word, new_candidates) for word in new_candidates]
+        next_guess = max_score(new_candidates, scores)
+        open_set.put((next_guess, new_candidates), scores[new_candidates.index(next_guess)])
 
     return None, attempts
 
@@ -123,7 +126,7 @@ def wordle_solver(dictionary, feedback_function, solution, max_attempts=6):
 def webapp():
     dictionary_path = "../dictionary"
     dictionary = load_dictionary(dictionary_path)
-    solution = get_word_of_the_day() #Alternativa: random.choice(dictionary)
+    solution =  random.choice(dictionary)
     attempts_log = []  #Per tenere traccia dei tentativi
 
     def feedback_function_logging(guess, solution):
